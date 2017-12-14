@@ -1,5 +1,7 @@
 #include "game.h"
 #include "pacman.h"
+#include "gameobject.h"
+#include "obstacle.h"
 #include <QTimer>
 #include <QGraphicsTextItem>
 #include <QFont>
@@ -20,6 +22,10 @@ Game::Game(QWidget *parent) {
     pacman->setPos(400, 500);
     pacman->setFlag(QGraphicsItem::ItemIsFocusable);
     pacman->setFocus();
+
+    QPen pen(Qt::white);
+    Obstacle *obs = new Obstacle();
+    scene->addRect(obs->obstacle, pen);
 
     scene->addItem(pacman);
     setBackgroundBrush(QBrush(Qt::black, Qt::SolidPattern));

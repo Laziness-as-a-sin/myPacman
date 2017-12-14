@@ -27,12 +27,14 @@ SOURCES += \
     main.cpp \
     game.cpp \
     pacman.cpp \
-    gameobject.cpp
+    gameobject.cpp \
+    obstacle.cpp
 
 HEADERS += \
     game.h \
     pacman.h \
-    gameobject.h
+    gameobject.h \
+    obstacle.h
 
 FORMS +=
 

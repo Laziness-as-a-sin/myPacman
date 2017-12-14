@@ -1,13 +1,13 @@
 #ifndef GAMEOBJECT_H
 #define GAMEOBJECT_H
 
-#include <QObject>
-#include <QPair>
 
-class GameObject: public QObject
+class GameObject
 {
-    Q_OBJECT
+    long mx, my;
+    int mwidth, mheight;
 public:
+    virtual bool CheckCollision();
     GameObject();
 };
 

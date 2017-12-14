@@ -3,9 +3,10 @@
 
 #include <QGraphicsPixmapItem>
 #include <QGraphicsItem>
+#include "gameobject.h"
 #include <QObject>
 
-class Pacman: public QObject, public QGraphicsPixmapItem {
+class Pacman: public GameObject, public QGraphicsPixmapItem, public QObject {
     Q_OBJECT
     int state;
 public:
