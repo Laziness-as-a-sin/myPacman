@@ -1,57 +1,99 @@
 #include "pacman.h"
-#include <QTimer>
-#include <QKeyEvent>
-#include <QDebug>
 
-Pacman::Pacman(QGraphicsItem *parent): QObject(), QGraphicsPixmapItem(parent) {
-    setPixmap(QPixmap(":/images/pacman_right.png"));
-
-    state = 3;
-
-    QTimer *timer = new QTimer(this);
-    connect(timer, SIGNAL(timeout()), this, SLOT(move()));
-
-    timer->start(250);
+PacMan::PacMan(QObject *parent) : QObject(parent), QGraphicsItem()
+{
+    angle = 0;
+    setRotation(angle);
+    SpritePos = 0;
+    SpriteImage = new QPixmap(":s4");
 }
 
-void Pacman::move() {
-    if(state == 1) {
-        setPixmap(QPixmap(":/images/pacman_up.png"));
-        if(y() - 16 > 0) {
-            setPos(x(), y() - 16);
-        }
+QRectF PacMan::boundingRect() const
+{
+    return QRectF(-25, -25, 50, 50);
+}
+
+void PacMan::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
+{
+    //painter->setBrush(Qt::yellow);
+    //painter->drawEllipse(-10, -10, 20, 20);
+    painter->drawPixmap(-10,-10, *SpriteImage, SpritePos, 0, 20,20);
+    timer = new QTimer();
+    connect(timer, &QTimer::timeout, this, &PacMan::NextFrame);
+    //timer->start(50);
+    Q_UNUSED(option);
+    Q_UNUSED(widget);
+}
+
+void PacMan::MoveOnTime()
+{
+    QList<QGraphicsItem *> foundItems = scene()->items(QPolygonF()
+                                                       << mapToScene(0, 0)
+                                                       << mapToScene(-10, 12)
+                                                       << mapToScene(10, 12));
+    foreach (QGraphicsItem *item, foundItems) {
+        if (item == this)
+            continue;
+        emit signalCheckItem(item);
     }
-    else if(state == 2) {
-        setPixmap(QPixmap(":/images/pacman_down.png"));
-        if(y() - 16 < 600) {
-            setPos(x(), y() + 16);
-        }
+
+    SpritePos += 20;
+    if (SpritePos >= 80 ) SpritePos = 0;
+
+    setPos(mapToParent(0, Vx));
+
+    if(this->x() - 10 < -260){
+        this->setX(250);
     }
-    else if(state == 3) {
-        setPixmap(QPixmap(":/images/pacman_left.png"));
-        if(x() - 16 > 0) {
-            setPos(x() - 16, y());
-        }
+    if(this->x() + 10 > 260){
+        this->setX(-250);
     }
-    else if(state == 4) {
-        setPixmap(QPixmap(":/images/pacman_right.png"));
-        if(x() + 16 < 800) {
-            setPos(x() + 16, y());
-        }
+    if(this->y() - 10 < -260){
+        this->setY(250);
+    }
+    if(this->y() + 10 > 260){
+        this->setY(-250);
+    }
+
+    if(GetAsyncKeyState(VK_LEFT)){
+        angle = 90;
+        setRotation(angle);
+        Vx = 1;
+    }
+    if(GetAsyncKeyState(VK_RIGHT)){
+        angle = 270;
+        setRotation(angle);
+        Vx = 1;
+    }
+    if(GetAsyncKeyState(VK_UP)){
+        angle = 180;
+        setRotation(angle);
+        Vx = 1;
+    }
+    if(GetAsyncKeyState(VK_DOWN)){
+        angle = 0;
+        setRotation(angle);
+        Vx = 1;
     }
 }
 
-void Pacman::keyPressEvent(QKeyEvent *event) {
-    if(event->key() == Qt::Key_Up) {
-        state = 1;
-    }
-    else if(event->key() == Qt::Key_Down) {
-        state = 2;
-    }
-    else if(event->key() == Qt::Key_Left) {
-        state = 3;
-    }
-    else if(event->key() == Qt::Key_Right) {
-        state = 4;
-    }
+void PacMan::PushButton(int agle)
+{
+
+}
+
+void PacMan::NextFrame(){
+    SpritePos += 20;
+    if (SpritePos >= 80 ) SpritePos = 0;
+    this->update(-10,-10,20,20);
+}
+
+void PacMan::stop()
+{
+    Vx = 0;
+}
+
+void PacMan::go()
+{
+    Vx = 1;
 }

@@ -1,6 +1,6 @@
 #-------------------------------------------------
 #
-# Project created by QtCreator 2017-11-24T03:52:21
+# Project created by QtCreator 2017-12-14T23:45:53
 #
 #-------------------------------------------------
 
@@ -8,7 +8,7 @@ QT       += core gui
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-TARGET = Pacman
+TARGET = pac1
 TEMPLATE = app
 
 # The following define makes your compiler emit warnings if you use
@@ -24,19 +24,22 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 
 SOURCES += \
-    main.cpp \
-    game.cpp \
+        main.cpp \
+        widget.cpp \
     pacman.cpp \
-    gameobject.cpp \
-    obstacle.cpp
+    wallblock.cpp \
+    ghost.cpp \
+    piece.cpp
 
 HEADERS += \
-    game.h \
+        widget.h \
     pacman.h \
-    gameobject.h \
-    obstacle.h
+    wallblock.h \
+    ghost.h \
+    piece.h
 
-FORMS +=
+FORMS += \
+        widget.ui
 
 RESOURCES += \
-    res.qrc
+    pacman.qrc
