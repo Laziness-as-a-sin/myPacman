@@ -29,12 +29,14 @@ private:
     QList<QGraphicsItem *> pieces;
     Ui::Widget *ui;
     QGraphicsScene *scene;
-    //Ghost *ghost;
+    Ghost *ghost;
     PacMan *pacman;
     //WallBlock *wallblock;    
     QTimer *timer;
     double countscope = 0;
     double countdeath = 0;
+    void incrementScore();
+    void death();
 
 private slots:
      void stop(QGraphicsItem * item);

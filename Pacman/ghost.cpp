@@ -18,8 +18,32 @@ QRectF Ghost::boundingRect() const
 
 void Ghost::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
+    //painter->setBrush(Qt::green);
+    //painter->drawEllipse(-10, -10, 20, 20);
     painter->setBrush(Qt::green);
-    painter->drawEllipse(-10, -10, 20, 20);
+    painter->setPen(Qt::green);
+    painter->drawEllipse(-10, -10, 20, 10); //верх
+    painter->drawRect(-10, -5, 20, 10); //туловище
+
+    painter->drawEllipse(-10, 5, 3, 3);
+    painter->drawEllipse(-5, 5, 3, 3);
+    painter->drawEllipse(1, 5, 3, 3);
+    painter->drawEllipse(7, 5, 3, 3);
+
+    painter->setBrush(Qt::white); //белки глаз
+    painter->drawEllipse(-8, -5, 7, 8);
+    painter->drawEllipse(2, -5, 7, 8);
+
+    painter->setBrush(Qt::black); //зрачки
+    painter->setPen(Qt::black);
+    if(Vy == 1){ //взгляд вниз
+    painter->drawEllipse(-6, -2, 3, 3);
+    painter->drawEllipse(4, -2, 3, 3);
+    }
+    if(Vy == -1){ //взгляд вверх
+    painter->drawEllipse(-6, -5, 3, 3);
+    painter->drawEllipse(4, -5, 3, 3);
+    }
 
     Q_UNUSED(option);
     Q_UNUSED(widget);

@@ -1,4 +1,7 @@
 #include "pacman.h"
+#ifdef Q_OS_WIN
+#include <windows.h>
+#endif
 
 PacMan::PacMan(QObject *parent) : QObject(parent), QGraphicsItem()
 {
@@ -15,12 +18,9 @@ QRectF PacMan::boundingRect() const
 
 void PacMan::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
-    //painter->setBrush(Qt::yellow);
-    //painter->drawEllipse(-10, -10, 20, 20);
     painter->drawPixmap(-10,-10, *SpriteImage, SpritePos, 0, 20,20);
     timer = new QTimer();
     connect(timer, &QTimer::timeout, this, &PacMan::NextFrame);
-    //timer->start(50);
     Q_UNUSED(option);
     Q_UNUSED(widget);
 }
@@ -96,4 +96,21 @@ void PacMan::stop()
 void PacMan::go()
 {
     Vx = 1;
+}
+
+void PacMan::die()
+{
+    this->stop();
+
+    for(int i = 0; i < 3; i++) {
+        //УНИЧТОЖИТЬ СЛИП!!!!
+    #ifdef Q_OS_WIN
+        Sleep(uint(100));
+    #endif
+        SpriteImage = new QPixmap("");
+    #ifdef Q_OS_WIN
+        Sleep(uint(100));
+    #endif
+        SpriteImage = new QPixmap(":s4");
+    }
 }

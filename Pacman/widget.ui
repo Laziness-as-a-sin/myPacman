@@ -29,37 +29,52 @@
     </rect>
    </property>
   </widget>
-  <widget class="QLCDNumber" name="lcdNumber">
+  <widget class="QLineEdit" name="lifesLabel">
    <property name="geometry">
     <rect>
-     <x>480</x>
+     <x>370</x>
      <y>10</y>
-     <width>64</width>
-     <height>23</height>
+     <width>221</width>
+     <height>41</height>
     </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Bauhaus 93</family>
+     <pointsize>26</pointsize>
+    </font>
    </property>
   </widget>
-  <widget class="QLCDNumber" name="lcdNumber2">
+  <widget class="QLineEdit" name="scoreLabel">
    <property name="geometry">
     <rect>
-     <x>480</x>
-     <y>40</y>
-     <width>64</width>
-     <height>23</height>
+     <x>10</x>
+     <y>10</y>
+     <width>341</width>
+     <height>41</height>
     </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Bauhaus 93</family>
+     <pointsize>26</pointsize>
+    </font>
    </property>
   </widget>
-  <widget class="QLabel" name="label">
+  <widget class="QLineEdit" name="infoLabel">
    <property name="geometry">
     <rect>
-     <x>380</x>
-     <y>10</y>
-     <width>71</width>
-     <height>21</height>
+     <x>50</x>
+     <y>570</y>
+     <width>501</width>
+     <height>31</height>
     </rect>
    </property>
-   <property name="text">
-    <string>Death Counter</string>
+   <property name="font">
+    <font>
+     <family>Bauhaus 93</family>
+     <pointsize>18</pointsize>
+    </font>
    </property>
   </widget>
  </widget>

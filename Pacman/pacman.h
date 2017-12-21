@@ -16,6 +16,7 @@ public:
     explicit PacMan(QObject *parent = 0);
     void stop();
     void go();
+    void die();
 
 signals:
     void signalCheckItem(QGraphicsItem *item);
