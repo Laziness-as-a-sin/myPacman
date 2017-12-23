@@ -18,6 +18,8 @@ QRectF Ghost::boundingRect() const
 
 void Ghost::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
+    counter++;
+    if(counter > 16)counter = 0;
     //painter->setBrush(Qt::green);
     //painter->drawEllipse(-10, -10, 20, 20);
     painter->setBrush(Qt::green);
@@ -26,9 +28,15 @@ void Ghost::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
     painter->drawRect(-10, -5, 20, 10); //туловище
 
     painter->drawEllipse(-10, 5, 3, 3);
+    painter->drawEllipse(7, 5, 3, 3);
+
+    if(counter > 8)
+    painter->drawEllipse(-3, 5, 6, 3);
+    else
+    {
     painter->drawEllipse(-5, 5, 3, 3);
     painter->drawEllipse(1, 5, 3, 3);
-    painter->drawEllipse(7, 5, 3, 3);
+    }
 
     painter->setBrush(Qt::white); //белки глаз
     painter->drawEllipse(-8, -5, 7, 8);
@@ -58,4 +66,14 @@ void Ghost::MoveOnTime()
     if(this->y() + 10 > 260){
         this->setY(-250);
     }
+}
+
+void Ghost::stop()
+{
+    Vy = 0;
+}
+
+void Ghost::go()
+{
+    Vy = 1;
 }

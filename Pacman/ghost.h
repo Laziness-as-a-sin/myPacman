@@ -14,8 +14,9 @@ class Ghost : public QObject, public QGraphicsItem
     Q_OBJECT
 public:
     explicit Ghost(QObject *parent = 0);
-    //void stop();
-    //void go();
+    void stop();
+    void go();
+    int counter = 0, Vx, Vy;
 
 signals:
     //void signalCheckItem(QGraphicsItem *item);
@@ -32,7 +33,7 @@ protected:
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
 
 private:
-    int Vx, Vy, angle;
+    int angle;
     //QPixmap *SpriteImage;
     QTimer *timer;
 };

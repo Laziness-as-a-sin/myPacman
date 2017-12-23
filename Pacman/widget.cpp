@@ -75,7 +75,7 @@ Widget::Widget(QWidget *parent) :
 
     ghost = new Ghost();
     scene->addItem(ghost);
-    pacman->setPos(0, 60);
+    ghost->setPos(0, 60);
     ghosts.append(ghost);
 
 }
@@ -113,33 +113,61 @@ void Widget::incrementScore() {
 }
 
 void Widget::death() {
+    pacman->stop();
+    pacman->setPos(0, 0);
+    foreach (QGraphicsItem *ghost, ghosts)
+    {
+        ghost->setPos(0, 60);
+       // ghost->Vy = 0;
+    }
     int curLifes = (ui->lifesLabel->text().split(" ")[1].toInt() - 1);
     ui->lifesLabel->setText("LIFES: " + QString::number(curLifes));
 
-    delete ghost;
-    pacman->die();
-    delete pacman;
 
-
-    //ИЗБАВИТЬСЯ ОТ SLEEP(!!!)
-    for(int i = 5; i > 0; i--) {
-        ui->infoLabel->setText("Respawn in " + QString::number(i) + "!");
-    #ifdef Q_OS_WIN
+    if(curLifes == 0){
+        ui->infoLabel->setText("Restarting...");
         Sleep(1000);
-    #endif
+        ui->infoLabel->setText("");
+        restart();
+    }
+    scene->update();
+#ifdef Q_OS_WIN
+    Sleep(1000);
+#endif
+
+}
+
+void Widget::restart() {
+    pacman->setPos(0, 0);
+
+    foreach(QGraphicsItem *ghost, ghosts) {
+        scene->removeItem(ghost);
+        ghosts.removeOne(ghost);
+        delete ghost;
     }
 
-    ui->infoLabel->setText("");
-
-    pacman = new PacMan();
-    pacman->setPos(0, 0);
-    scene->addItem(pacman);
-    connect(timer, &QTimer::timeout, pacman, &PacMan::MoveOnTime);
-    timer->start(1000 / 200);
-    connect(pacman, &PacMan::signalCheckItem, this, &Widget::stop);
+    foreach(QGraphicsItem *piece, pieces) {
+        scene->removeItem(piece);
+        pieces.removeOne(piece);
+        delete piece;
+    }
+    for(int i = -250; i < 13; i++) {
+        Piece *piece = new Piece();
+        scene->addItem(piece);
+        piece->setPos(0, i*20);
+        pieces.append(piece);
+    }
 
     ghost = new Ghost();
     scene->addItem(ghost);
-    pacman->setPos(0, 60);
+    ghost->setPos(0, 60);
     ghosts.append(ghost);
+
+    ui->scoreLabel->setText("SCORE: 0");
+    ui->lifesLabel->setText("LIFES: 3");
+}
+
+void Widget::revive() {
+    pacman->go();
+    //ghost->Vy = 1;
 }

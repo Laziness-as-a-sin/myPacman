@@ -37,9 +37,11 @@ private:
     double countdeath = 0;
     void incrementScore();
     void death();
+    void restart();
 
 private slots:
      void stop(QGraphicsItem * item);
+     void revive();
 };
 
 #endif // WIDGET_H
