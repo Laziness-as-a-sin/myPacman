@@ -1,6 +1,7 @@
 #include "widget.h"
 #include "ui_widget.h"
 
+
 Widget::Widget(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::Widget)
@@ -9,9 +10,12 @@ Widget::Widget(QWidget *parent) :
     this->resize(600,600);
     this->setFixedSize(600,600);
     this->setStyleSheet("background-color: black");
+    d = QPixmap(":Die");
 
     scene = new QGraphicsScene();
     pacman = new PacMan();
+    dl = scene->addPixmap(d);
+    scene->removeItem(dl);
 
     ui->graphicsView->setScene(scene);
     ui->graphicsView->setRenderHint(QPainter::Antialiasing);
@@ -31,22 +35,12 @@ Widget::Widget(QWidget *parent) :
     ui->lifesLabel->setText("LIFES: 3");
     ui->scoreLabel->setText("SCORE: 0");
 
-    scene->setSceneRect(-250,-250,500,500);
-
-    //scene->addLine(-250,0,250,0,QPen(Qt::black));
-    //scene->addLine(0,-250,0,250,QPen(Qt::black));
-
-    //scene->addLine(-250,-250, 250,-250, QPen(Qt::black));
-    //scene->addLine(-250, 250, 250, 250, QPen(Qt::black));
-    //scene->addLine(-250,-250,-250, 250, QPen(Qt::black));
-    //scene->addLine( 250,-250, 250, 250, QPen(Qt::black));
+    scene->setSceneRect(-250,-250, 500, 500);
 
     scene->addItem(pacman);
-    pacman->setPos(0, 0);
 
     timer = new QTimer();
     connect(timer, &QTimer::timeout, pacman, &PacMan::MoveOnTime);
-    //connect(timer, &QTimer::timeout, ghost, &Ghost::MoveOnTime);
     timer->start(1000 / 200);
 
     connect(pacman, &PacMan::signalCheckItem, this, &Widget::stop);
@@ -56,27 +50,17 @@ Widget::Widget(QWidget *parent) :
         WallBlock *wallblock = new WallBlock();
         scene->addItem(wallblock);
         wallblock->setPos(-40, i*20);
-        wallblocks.append(wallblock);        
+        wallblocks.append(wallblock);
+
     }
-    for(int i = -250; i < 13; i++)
+   for(int i = -250; i < 13; i++)
     {
         WallBlock *wallblock = new WallBlock();
         scene->addItem(wallblock);
         wallblock->setPos(40, i*20);
         wallblocks.append(wallblock);
     }
-    for(int i = -250; i < 13; i++)//куски
-    {
-        Piece *piece = new Piece();
-        scene->addItem(piece);
-        piece->setPos(0, i*20);
-        pieces.append(piece);
-    }
-
-    ghost = new Ghost();
-    scene->addItem(ghost);
-    ghost->setPos(0, 60);
-    ghosts.append(ghost);
+    Widget::restart();
 
 }
 
@@ -113,34 +97,37 @@ void Widget::incrementScore() {
 }
 
 void Widget::death() {
-    pacman->stop();
-    pacman->setPos(0, 0);
-    foreach (QGraphicsItem *ghost, ghosts)
-    {
-        ghost->setPos(0, 60);
-       // ghost->Vy = 0;
-    }
     int curLifes = (ui->lifesLabel->text().split(" ")[1].toInt() - 1);
     ui->lifesLabel->setText("LIFES: " + QString::number(curLifes));
 
+    pacman->stop();
+    ghosts[0]->stop();
 
     if(curLifes == 0){
-        ui->infoLabel->setText("Restarting...");
-        Sleep(1000);
-        ui->infoLabel->setText("");
-        restart();
+        pacman->KeyA = 0;
+        ghosts[0]->KeyA = 0;
+        die = 1;
+        scene->addItem(dl);
+        dl->setPos(-300, -300);
+        pacman->die();
     }
-    scene->update();
-#ifdef Q_OS_WIN
-    Sleep(1000);
-#endif
+    else
+    foreach (QGraphicsItem *ghost, ghosts)
+    {
+        ghost->setPos(0, 60);
+        pacman->setPos(0, 0);
+    }
 
+    scene->update();
+/*#ifdef Q_OS_WIN
+    Sleep(1000);
+#endif*/
 }
 
 void Widget::restart() {
     pacman->setPos(0, 0);
 
-    foreach(QGraphicsItem *ghost, ghosts) {
+    foreach(Ghost *ghost, ghosts) {
         scene->removeItem(ghost);
         ghosts.removeOne(ghost);
         delete ghost;
@@ -169,5 +156,17 @@ void Widget::restart() {
 
 void Widget::revive() {
     pacman->go();
-    //ghost->Vy = 1;
+    restart();
+    pacman->KeyA = 1;
+    ghosts[0]->KeyA = 1;
+    if(die){
+        scene->removeItem(dl);
+        die = 0;
+    }
+}
+
+void Widget::keyPressEvent(QKeyEvent *ev)
+{
+    if (ev->key() == Qt::Key_G)revive();
+    if (ev->key() == Qt::Key_Escape){}
 }

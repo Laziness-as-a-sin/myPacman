@@ -17,12 +17,12 @@ public:
     void stop();
     void go();
     void die();
+    bool KeyA = 1, pacd = 0;
 
 signals:
     void signalCheckItem(QGraphicsItem *item);
 
 public slots:
-    void PushButton(int);
     void MoveOnTime();
 
 private slots:
@@ -34,7 +34,7 @@ protected:
 
 private:
     int Vx, Vy, angle, SpritePos;
-    QPixmap *SpriteImage;
+    QPixmap *SpriteImage, *Pixm;
     QTimer *timer;
 };
 

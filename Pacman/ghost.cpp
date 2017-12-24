@@ -20,8 +20,7 @@ void Ghost::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
 {
     counter++;
     if(counter > 16)counter = 0;
-    //painter->setBrush(Qt::green);
-    //painter->drawEllipse(-10, -10, 20, 20);
+
     painter->setBrush(Qt::green);
     painter->setPen(Qt::green);
     painter->drawEllipse(-10, -10, 20, 10); //верх
@@ -31,11 +30,11 @@ void Ghost::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
     painter->drawEllipse(7, 5, 3, 3);
 
     if(counter > 8)
-    painter->drawEllipse(-3, 5, 6, 3);
+        painter->drawEllipse(-3, 5, 6, 3);
     else
     {
-    painter->drawEllipse(-5, 5, 3, 3);
-    painter->drawEllipse(1, 5, 3, 3);
+        painter->drawEllipse(-5, 5, 3, 3);
+        painter->drawEllipse(1, 5, 3, 3);
     }
 
     painter->setBrush(Qt::white); //белки глаз
@@ -44,13 +43,14 @@ void Ghost::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
 
     painter->setBrush(Qt::black); //зрачки
     painter->setPen(Qt::black);
+
     if(Vy == 1){ //взгляд вниз
-    painter->drawEllipse(-6, -2, 3, 3);
-    painter->drawEllipse(4, -2, 3, 3);
+        painter->drawEllipse(-6, -2, 3, 3);
+        painter->drawEllipse(4, -2, 3, 3);
     }
     if(Vy == -1){ //взгляд вверх
-    painter->drawEllipse(-6, -5, 3, 3);
-    painter->drawEllipse(4, -5, 3, 3);
+        painter->drawEllipse(-6, -5, 3, 3);
+        painter->drawEllipse(4, -5, 3, 3);
     }
 
     Q_UNUSED(option);
@@ -59,6 +59,13 @@ void Ghost::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
 
 void Ghost::MoveOnTime()
 {
+    if(KeyA){
+        if(GetAsyncKeyState(VK_LEFT))go();
+        if(GetAsyncKeyState(VK_RIGHT))go();
+        if(GetAsyncKeyState(VK_UP))go();
+        if(GetAsyncKeyState(VK_DOWN))go();
+    }
+
     setPos(mapToParent(0, Vy));
     if(this->y() - 10 < -260){
         this->setY(250);

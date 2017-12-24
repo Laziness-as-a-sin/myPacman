@@ -4,5 +4,8 @@
         <file alias="s2">normspritepacman.png</file>
         <file alias="s3">spritepacman.png</file>
         <file alias="s4">s4.png</file>
+        <file alias="Die">SceneDie.png</file>
+        <file alias="Die2">12.png</file>
+        <file alias="Diep">DIEP.png</file>
     </qresource>
 </RCC>
