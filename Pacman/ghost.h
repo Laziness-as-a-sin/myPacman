@@ -7,8 +7,7 @@
 #include <QGraphicsScene>
 #include <QPixmap>
 #include <QTimer>
-
-#include <windows.h>
+//#include <windows.h>
 
 class Ghost : public QObject, public QGraphicsItem
 {
@@ -18,7 +17,6 @@ public:
     void stop();
     void go();
     int counter = 0, Vx, Vy;
-    bool KeyA = 1;
 
 signals:
     //void signalCheckItem(QGraphicsItem *item);
@@ -36,6 +34,7 @@ protected:
 
 private:
     int angle;
+    //QPixmap *SpriteImage;
     QTimer *timer;
 };
 

@@ -1,5 +1,6 @@
 #include "pacman.h"
 #ifdef Q_OS_WIN
+#include <windows.h>
 #endif
 
 PacMan::PacMan(QObject *parent) : QObject(parent), QGraphicsItem()
@@ -7,22 +8,17 @@ PacMan::PacMan(QObject *parent) : QObject(parent), QGraphicsItem()
     angle = 0;
     setRotation(angle);
     SpritePos = 0;
-    Vx = 0;
     SpriteImage = new QPixmap(":s4");
-    Pixm = new QPixmap("Diep");
 }
 
 QRectF PacMan::boundingRect() const
 {
-    return QRectF(-25, -25, 50, 50);
+    return QRectF(-10, -10, 20, 20);
 }
 
 void PacMan::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
-    /*if(pacd){painter->drawPixmap(-10, -10, *Pixm, 0, 0, 20, 20);}
-    else*/
     painter->drawPixmap(-10,-10, *SpriteImage, SpritePos, 0, 20,20);
-
     timer = new QTimer();
     connect(timer, &QTimer::timeout, this, &PacMan::NextFrame);
     Q_UNUSED(option);
@@ -40,6 +36,7 @@ void PacMan::MoveOnTime()
             continue;
         emit signalCheckItem(item);
     }
+
 
     SpritePos += 20;
     if (SpritePos >= 80 ) SpritePos = 0;
@@ -59,27 +56,86 @@ void PacMan::MoveOnTime()
         this->setY(-250);
     }
 
-    if(KeyA){
-    if(GetAsyncKeyState(VK_LEFT)){
-        angle = 90;
+    bool cross = 0;
+    if(GetAsyncKeyState(VK_LEFT))tern = 1;
+    if(GetAsyncKeyState(VK_RIGHT))tern = 2;
+    if(GetAsyncKeyState(VK_UP))tern = 3;
+    if(GetAsyncKeyState(VK_DOWN))tern = 4;
+
+    if(tern == 1){   //left
+        setRotation(180);
+        setPos(mapToParent(3, 0));
+        if(!scene()->collidingItems(this).isEmpty()){
+            cross = 1;
+        }
+        setPos(mapToParent(-3, 0));
+        if(!cross){
+            ;
+            angle = 90;
+            Vx = 1;
+            tern = 0;
+        }
+        else{
+            tern = 1;
+        }
         setRotation(angle);
-        Vx = 1;
     }
-    if(GetAsyncKeyState(VK_RIGHT)){
-        angle = 270;
+    if(tern == 2){   //right
+        setRotation(180);
+        setPos(mapToParent(-3, 0));
+        if(!scene()->collidingItems(this).isEmpty()){
+            cross = 1;
+        }
+        setPos(mapToParent(3, 0));
+        if(!cross){
+            angle = 270;
+            Vx = 1;
+            tern = 0;
+        }
+        else{
+            tern = 2;
+        }
         setRotation(angle);
-        Vx = 1;
     }
-    if(GetAsyncKeyState(VK_UP)){
-        angle = 180;
+    if(tern == 3){  //up
+        setRotation(180);
+        setPos(mapToParent(0, 3));
+        if(!scene()->collidingItems(this).isEmpty()){
+            cross = 1;
+        }
+        setPos(mapToParent(0, -3));
+        if(!cross){
+            angle = 180;
+            Vx = 1;
+            tern = 0;
+        }
+        else{
+            tern = 3;
+        }
         setRotation(angle);
-        Vx = 1;
     }
-    if(GetAsyncKeyState(VK_DOWN)){
-        angle = 0;
+    if(tern == 4){ //dowen
+        setRotation(180);
+        setPos(mapToParent(0, -3));
+        if(!scene()->collidingItems(this).isEmpty()){
+            cross = 1;
+        }
+        setPos(mapToParent(0, 3));
+        if(!cross){
+            angle = 0;
+            Vx = 1;
+            tern = 0;
+        }
+        else{
+            tern = 4;
+        }
         setRotation(angle);
-        Vx = 1;
-    }}
+    }
+}
+
+void PacMan::PushButton(int agle)
+{
+
 }
 
 void PacMan::NextFrame(){
@@ -96,11 +152,21 @@ void PacMan::stop()
 void PacMan::go()
 {
     Vx = 1;
-    pacd = 0;
 }
 
 void PacMan::die()
 {
-    pacd = 1;
-    this->update(-10,-10,20,20);
+    this->stop();
+
+    for(int i = 0; i < 3; i++) {
+        //УНИЧТОЖИТЬ СЛИП!!!!
+    #ifdef Q_OS_WIN
+        Sleep(uint(100));
+    #endif
+        SpriteImage = new QPixmap("");
+    #ifdef Q_OS_WIN
+        Sleep(uint(100));
+    #endif
+        SpriteImage = new QPixmap(":s4");
+    }
 }

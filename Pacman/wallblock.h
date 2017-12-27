@@ -2,6 +2,9 @@
 #define WALLBLOCK_H
 
 #include <QObject>
+#include <QFile>
+#include <QTextStream>
+#include <QDebug>
 #include <QGraphicsItem>
 #include <QGraphicsScene>
 #include <QPainter>
