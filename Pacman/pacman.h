@@ -17,6 +17,7 @@ public:
     void stop();
     void go();
     void die();
+    bool KeyA = 1, pacd = 0;
 
 signals:
     void signalCheckItem(QGraphicsItem *item);

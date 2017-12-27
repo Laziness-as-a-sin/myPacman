@@ -12,6 +12,10 @@ Widget::Widget(QWidget *parent) :
 
     scene = new QGraphicsScene();
     pacman = new PacMan();
+    d = QPixmap(":Die");
+    dl = scene->addPixmap(d);
+    scene->removeItem(dl);
+
 
     ui->graphicsView->setScene(scene);
     ui->graphicsView->setRenderHint(QPainter::Antialiasing);
@@ -33,96 +37,21 @@ Widget::Widget(QWidget *parent) :
 
     scene->setSceneRect(-250,-250,500,500);
 
-    //scene->addLine(-250,0,250,0,QPen(Qt::black));
-    //scene->addLine(0,-250,0,250,QPen(Qt::black));
-
-    //scene->addLine(-250,-250, 250,-250, QPen(Qt::black));
-    //scene->addLine(-250, 250, 250, 250, QPen(Qt::black));
-    //scene->addLine(-250,-250,-250, 250, QPen(Qt::black));
-    //scene->addLine( 250,-250, 250, 250, QPen(Qt::black));
-
     scene->addItem(pacman);
     pacman->setPos(0, 0);
 
     timer = new QTimer();
     connect(timer, &QTimer::timeout, pacman, &PacMan::MoveOnTime);
-    //connect(timer, &QTimer::timeout, ghost, &Ghost::MoveOnTime);
     timer->start(1000 / 200);
 
     connect(pacman, &PacMan::signalCheckItem, this, &Widget::stop);
     QFile file(":lvl1");
-    QByteArray block;
+    //QByteArray block;
     if(!file.open(QIODevice::ReadOnly))
     {qDebug() <<  "Cannot open a file";}else{
        block = file.readAll();
-
-        int x = -240,y = -240;
-       // for(int p = 0; p < 30; p++){
-       for(int i = 0; i < 650; i++){
-       if (block[i] == '+'){
-
-           WallBlock *wallblock = new WallBlock();
-           scene->addItem(wallblock);
-           wallblock->setPos(x, y);
-           wallblocks.append(wallblock);
-           x += 20;
-       }else if(block[i] == '-') {
-           Piece *piece = new Piece();
-           scene->addItem(piece);
-           piece->setPos(x, y);
-           pieces.append(piece);
-           x += 20;
-       }else if(block[i] == '.'){
-           x += 20;
-       }else if(block[i] == '*'){
-           x = -240;
-           y += 20;
-        }
-
-}
     }
-    /*for(int i = -250; i < 13; i++)//стеночки
-    {
-        WallBlock *wallblock = new WallBlock();
-        scene->addItem(wallblock);
-        wallblock->setPos(-40, i*20);
-        wallblocks.append(wallblock);        
-    }
-    for(int i = -250; i < 13; i++)
-    {
-        WallBlock *wallblock = new WallBlock();
-        scene->addItem(wallblock);
-        wallblock->setPos(40, i*20);
-        wallblocks.append(wallblock);
-    }
-    for(int i = -250; i < 13; i++)//стеночки
-    {
-        WallBlock *wallblock = new WallBlock();
-        scene->addItem(wallblock);
-        wallblock->setPos(i*20, -240);
-        wallblocks.append(wallblock);
-    }
-    for(int i = -250; i < 13; i++)//стеночки
-    {
-        WallBlock *wallblock = new WallBlock();
-        scene->addItem(wallblock);
-        wallblock->setPos(-40, i*20);
-        wallblocks.append(wallblock);
-    }*/
-    /*for(int i = -250; i < 13; i++)//куски
-    {
-        Piece *piece = new Piece();
-        scene->addItem(piece);
-        piece->setPos(0, i*20);
-        pieces.append(piece);
-    }*/
-
-
-    ghost = new Ghost();
-    scene->addItem(ghost);
-    ghost->setPos(0, 60);
-    ghosts.append(ghost);
-
+    restart();
 }
 
 void Widget::stop(QGraphicsItem *item)//взаимодействие, надо переименовать
@@ -158,34 +87,35 @@ void Widget::incrementScore() {
 }
 
 void Widget::death() {
-    pacman->stop();
-    pacman->setPos(0, 0);
-    foreach (QGraphicsItem *ghost, ghosts)
-    {
-        ghost->setPos(0, 60);
-       // ghost->Vy = 0;
-    }
     int curLifes = (ui->lifesLabel->text().split(" ")[1].toInt() - 1);
     ui->lifesLabel->setText("LIFES: " + QString::number(curLifes));
 
+    pacman->stop();
+    ghosts[0]->stop();
+
 
     if(curLifes == 0){
-        ui->infoLabel->setText("Restarting...");
-        Sleep(1000);
-        ui->infoLabel->setText("");
-        restart();
+        pacman->KeyA = 0;
+        ghosts[0]->KeyA = 0;
+        die = 1;
+        scene->addItem(dl);
+        dl->setPos(-300, -300);
+        pacman->die();
     }
-    scene->update();
-#ifdef Q_OS_WIN
-    Sleep(1000);
-#endif
+    else
+    foreach (QGraphicsItem *ghost, ghosts)
+    {
+        ghost->setPos(0, 60);
+        pacman->setPos(0, 0);
+    }
 
+    scene->update();
 }
 
 void Widget::restart() {
     pacman->setPos(0, 0);
 
-    foreach(QGraphicsItem *ghost, ghosts) {
+    foreach(Ghost *ghost, ghosts) {
         scene->removeItem(ghost);
         ghosts.removeOne(ghost);
         delete ghost;
@@ -196,11 +126,35 @@ void Widget::restart() {
         pieces.removeOne(piece);
         delete piece;
     }
-    for(int i = -250; i < 13; i++) {
-        Piece *piece = new Piece();
-        scene->addItem(piece);
-        piece->setPos(0, i*20);
-        pieces.append(piece);
+
+    foreach (QGraphicsItem *wallblock, wallblocks) {
+        scene->removeItem(wallblock);
+        wallblocks.removeOne(wallblock);
+        delete wallblock;
+    }
+
+    int x = -240,y = -240;
+
+    for(int i = 0; i < 650; i++){
+       if (block[i] == '+'){
+
+           WallBlock *wallblock = new WallBlock();
+           scene->addItem(wallblock);
+           wallblock->setPos(x, y);
+           wallblocks.append(wallblock);
+           x += 20;
+       }else if(block[i] == '-') {
+           Piece *piece = new Piece();
+           scene->addItem(piece);
+           piece->setPos(x, y);
+           pieces.append(piece);
+           x += 20;
+       }else if(block[i] == '.'){
+           x += 20;
+       }else if(block[i] == '*'){
+           x = -240;
+           y += 20;
+        }
     }
 
     ghost = new Ghost();
@@ -214,5 +168,16 @@ void Widget::restart() {
 
 void Widget::revive() {
     pacman->go();
-    //ghost->Vy = 1;
+    restart();
+    pacman->KeyA = 1;
+    ghosts[0]->KeyA = 1;
+    if(die){
+        scene->removeItem(dl);
+        die = 0;
+    }
+}
+
+void Widget::keyPressEvent(QKeyEvent *ev)
+{
+    if(die)revive();
 }

@@ -57,10 +57,12 @@ void PacMan::MoveOnTime()
     }
 
     bool cross = 0;
-    if(GetAsyncKeyState(VK_LEFT))tern = 1;
-    if(GetAsyncKeyState(VK_RIGHT))tern = 2;
-    if(GetAsyncKeyState(VK_UP))tern = 3;
-    if(GetAsyncKeyState(VK_DOWN))tern = 4;
+    if(KeyA){
+        if(GetAsyncKeyState(VK_LEFT))tern = 1;
+        if(GetAsyncKeyState(VK_RIGHT))tern = 2;
+        if(GetAsyncKeyState(VK_UP))tern = 3;
+        if(GetAsyncKeyState(VK_DOWN))tern = 4;
+    }
 
     if(tern == 1){   //left
         setRotation(180);
@@ -152,21 +154,10 @@ void PacMan::stop()
 void PacMan::go()
 {
     Vx = 1;
+    pacd = 0;
 }
 
 void PacMan::die()
 {
-    this->stop();
-
-    for(int i = 0; i < 3; i++) {
-        //УНИЧТОЖИТЬ СЛИП!!!!
-    #ifdef Q_OS_WIN
-        Sleep(uint(100));
-    #endif
-        SpriteImage = new QPixmap("");
-    #ifdef Q_OS_WIN
-        Sleep(uint(100));
-    #endif
-        SpriteImage = new QPixmap(":s4");
-    }
+    pacd = 1;
 }

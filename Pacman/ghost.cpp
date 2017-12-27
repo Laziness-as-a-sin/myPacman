@@ -59,6 +59,13 @@ void Ghost::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
 
 void Ghost::MoveOnTime()
 {
+    if(KeyA){
+        if(GetAsyncKeyState(VK_LEFT))go();
+        if(GetAsyncKeyState(VK_RIGHT))go();
+        if(GetAsyncKeyState(VK_UP))go();
+        if(GetAsyncKeyState(VK_DOWN))go();
+    }
+
     setPos(mapToParent(0, Vy));
     if(this->y() - 10 < -260){
         this->setY(250);

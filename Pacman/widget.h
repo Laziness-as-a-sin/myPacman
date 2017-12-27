@@ -5,6 +5,7 @@
 #include <QGraphicsScene>
 #include <QShortcut>
 #include <QTimer>
+#include <QKeyEvent>
 
 #include <pacman.h>
 #include <wallblock.h>
@@ -25,23 +26,27 @@ public:
 
 private:
     QList<QGraphicsItem *> wallblocks;
-    QList<QGraphicsItem *> ghosts;
+    QList<Ghost *> ghosts;
+    Ghost *ghost;
     QList<QGraphicsItem *> pieces;
     Ui::Widget *ui;
     QGraphicsScene *scene;
-    Ghost *ghost;
-    PacMan *pacman;
-    //WallBlock *wallblock;    
+    PacMan *pacman;    
     QTimer *timer;
     double countscope = 0;
     double countdeath = 0;
+    bool die = 0;
     void incrementScore();
     void death();
     void restart();
+    QByteArray block;
+    QPixmap d;
+    QGraphicsItem *dl;
+    void keyPressEvent(QKeyEvent *);
 
 private slots:
      void stop(QGraphicsItem * item);
-     void revive();
+     void revive();     
 };
 
 #endif // WIDGET_H
