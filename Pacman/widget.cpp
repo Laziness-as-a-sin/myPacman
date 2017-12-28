@@ -12,7 +12,7 @@ Widget::Widget(QWidget *parent) :
 
     scene = new QGraphicsScene();
     pacman = new PacMan();
-    //сделай тут такое же объявление для победного экрана
+
     d = QPixmap(":Die");
     dl = scene->addPixmap(d);
     scene->removeItem(dl);
@@ -92,9 +92,9 @@ void Widget::stop(QGraphicsItem *item)//взаимодействие, надо �
             pieces.removeOne(item);
             delete piece;
             incrementScore();
-            /*if(pieces.isEmpty()) {
-                win();
-            }*/
+            if(pieces.isEmpty()) {
+                winscene();
+            }
         }
 
 }
@@ -112,7 +112,6 @@ void Widget::incrementScore() {
         nextlevel(level);
     }
 
-    if(score == 200){winscene();}//посчитать макс очки, пусть гриша считает
 }
 
 void Widget::death() {
