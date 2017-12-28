@@ -179,7 +179,7 @@ void Widget::keyPressEvent(QKeyEvent *ev)
         pause();
 }
 void Widget::nextlevel(int level) {
-    pacman->setPos(0, 0);
+    pacman->setPos(200, 200);
 
     if(level == 1){block = block1; finaltime = 0;}
     if(level == 2)block = block2;
@@ -245,10 +245,12 @@ void Widget::nextlevel(int level) {
         }
     }
 
+    if(!map[0][0])ui->scorewin->setText("");
+
     ghost = new Ghost();
     ghost->mapInit(map);
     scene->addItem(ghost);
-    ghost->setPos(0, 60);
+    ghost->setPos(0, 0);
     ghosts.append(ghost);
 
     ui->scoreLabel->setText("SCORE: 0");

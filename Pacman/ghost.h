@@ -20,6 +20,7 @@ public:
     int counter = 0, Vx, Vy;
     bool KeyA = 1;
     int paths[24][24];
+    bool bmap[24][24];
 signals:
     //void signalCheckItem(QGraphicsItem *item);
 
@@ -35,9 +36,10 @@ protected:
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
 
 private:
-    int angle;
+    int mx, my;
     //QPixmap *SpriteImage;
     QTimer *timer;
+    bool turnUP, turnDOWN, turnLEFT, turnRIGHT;
 };
 
 #endif // GHOST_H

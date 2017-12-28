@@ -1,13 +1,11 @@
 #include "ghost.h"
-#include <fstream>
 #include <QDebug>
 
 Ghost::Ghost(QObject *parent) : QObject(parent), QGraphicsItem()
 {
-    angle = 0;
-    setRotation(angle);
-    Vy = 1;
-    //SpriteImage = new QPixmap(":s4");
+    setRotation(0);
+    Vx = 0, Vy = 0;
+
     timer = new QTimer();
     connect(timer, &QTimer::timeout, this, &Ghost::MoveOnTime);
     timer->start(1000/200);
@@ -67,6 +65,11 @@ void Ghost::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
 
 void Ghost::MoveOnTime()
 {
+    turnRIGHT = 0;
+    turnLEFT = 0;
+    turnDOWN = 0;
+    turnUP = 0;
+
     if(KeyA){
         if(GetAsyncKeyState(VK_LEFT))go();
         if(GetAsyncKeyState(VK_RIGHT))go();
@@ -74,28 +77,70 @@ void Ghost::MoveOnTime()
         if(GetAsyncKeyState(VK_DOWN))go();
     }
 
-    setPos(mapToParent(0, Vy));
-    if(this->y() - 10 < -260){
-        this->setY(250);
+
+    qDebug() << my;
+    qDebug() << mx;
+
+    if((int)this->y() % 20 == 0 && (int)this->x() % 20 == 0){
+        mx = (int)this->x() / 20;
+        if(mx <= 0)
+            mx = 12-abs(mx);
+        else
+            mx += 12;
+
+        my = (int)this->y() / 20;
+        if(my <= 0)
+            my = 12-abs(my);
+        else
+            my += 12;
+
+        qDebug() << my;
+        qDebug() << mx;
+        if(bmap[my][mx+1])turnRIGHT = 1;
+        if(bmap[my][mx-1])turnLEFT = 1;
+        if(bmap[my+1][mx])turnDOWN = 1;
+        if(bmap[my-1][mx])turnUP = 1;
+
+        int super_random = qrand() % ((4 + 1) - 1) + 1;
+        while(1){
+            if(super_random == 1 && turnRIGHT && Vx != -1){Vx = 1; Vy = 0; break;}
+            if(super_random == 2 && turnLEFT && Vx != 1){Vx = -1; Vy = 0; break;}
+            if(super_random == 3 && turnDOWN && Vy != -1){Vx = 0; Vy = 1; break;}
+            if(super_random == 3 && turnUP && Vy != 1){Vx = 0; Vy = -1; break;}
+            if(!turnUP && !turnDOWN && !turnLEFT){Vx = 1; Vy = 0; break;}
+            if(!turnUP && !turnDOWN && !turnRIGHT){Vx = -1; Vy = 0; break;}
+            if(!turnUP && !turnRIGHT && !turnLEFT){Vx = 0; Vy = 1; break;}
+            if(!turnRIGHT && !turnDOWN && !turnLEFT){Vx = 0; Vy = -1; break;}
+            super_random = qrand() % ((4 + 1) - 1) + 1;
+        }
+
     }
-    if(this->y() + 10 > 260){
-        this->setY(-250);
+
+
+    setPos(mapToParent(Vx, Vy));
+    if(this->x() - 10 < -260){
+        this->setX(250);
     }
+    if(this->x() + 10 > 260){
+        this->setX(-250);
+    }
+
 }
 
 void Ghost::stop()
 {
-    Vy = 0;
+    Vx = 0;
 }
 
 void Ghost::go()
 {
-    Vy = 1;
+
 }
 
 void Ghost::mapInit(bool map[24][24]) {
     for(int i = 0; i < 24; i++) {
         for(int j = 0; j < 24; j++) {
+            bmap[i][j] = map[i][j];
             //сверху
             if(i > 0 && map[i - 1][j]) {
                 paths[i][j]++;
