@@ -39,10 +39,11 @@ private:
     void incrementScore();
     void death();
     void restart();
+    void win();
     void nextlevel(int level);
     QByteArray block, block1, block2, block3;
-    QPixmap d;
-    QGraphicsItem *dl;
+    QPixmap d, w;
+    QGraphicsItem *dl, *wl;
     void keyPressEvent(QKeyEvent *);
     int score = 0, level = 1;
     void pause();

@@ -12,6 +12,7 @@ Widget::Widget(QWidget *parent) :
 
     scene = new QGraphicsScene();
     pacman = new PacMan();
+    //сделай тут такое же объявление для победного экрана
     d = QPixmap(":Die");
     dl = scene->addPixmap(d);
     scene->removeItem(dl);
@@ -81,6 +82,9 @@ void Widget::stop(QGraphicsItem *item)//взаимодействие, надо �
             pieces.removeOne(item);
             delete piece;
             incrementScore();
+            if(pieces.isEmpty()) {
+                win();
+            }
         }
 
 }
@@ -125,6 +129,22 @@ void Widget::death() {
     }
 
     scene->update();
+}
+
+void Widget::win() {
+    /*
+    pacman->stop();
+    ghosts[0]->stop();
+
+    pacman->KeyA = 0;
+    ghosts[0]->KeyA = 0;
+    die = 1;
+    scene->addItem(wl);
+    wl->setPos(-300, -300);
+    pacman->die();
+
+    scene->update();
+    */
 }
 
 void Widget::restart() {
