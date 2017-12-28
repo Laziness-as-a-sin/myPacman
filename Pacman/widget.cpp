@@ -12,7 +12,7 @@ Widget::Widget(QWidget *parent) :
 
     scene = new QGraphicsScene();
     pacman = new PacMan();
-
+    //сделай тут такое же объявление для победного экрана
     d = QPixmap(":Die");
     dl = scene->addPixmap(d);
     scene->removeItem(dl);
@@ -37,7 +37,8 @@ Widget::Widget(QWidget *parent) :
     ui->scoreLabel->setStyleSheet("color: yellow; border-style: none");
     ui->infoLabel->setStyleSheet("color: yellow; border-style: none");
     //ui->EndW->setStyleSheet("color: yellow; border-style: none");
-
+    ui->scorewin->setStyleSheet("QLabel{background-color: rgba(0, 0, 0, 0);}");
+    ui->scorewin->setAlignment(Qt::AlignCenter);
 
     ui->lifesLabel->setText("LIFES: 3");
     ui->scoreLabel->setText("SCORE: 0");
@@ -49,7 +50,9 @@ Widget::Widget(QWidget *parent) :
 
     timer = new QTimer();
     connect(timer, &QTimer::timeout, pacman, &PacMan::MoveOnTime);
+    connect(timer, &QTimer::timeout, this, &Widget::timeplus);
     timer->start(1000 / 200);
+
 
     connect(pacman, &PacMan::signalCheckItem, this, &Widget::stop);
     QFile lvl1(":lvl1"), lvl2(":lvl2"), lvl3(":lvl3");
@@ -64,6 +67,10 @@ Widget::Widget(QWidget *parent) :
     }
 
     nextlevel(1);
+}
+
+void Widget::timeplus(){
+    finaltime++;
 }
 
 void Widget::stop(QGraphicsItem *item)//взаимодействие, надо переименовать
@@ -85,9 +92,9 @@ void Widget::stop(QGraphicsItem *item)//взаимодействие, надо �
             pieces.removeOne(item);
             delete piece;
             incrementScore();
-            if(pieces.isEmpty()) {
-                winscene();
-            }
+            /*if(pieces.isEmpty()) {
+                win();
+            }*/
         }
 
 }
@@ -105,6 +112,7 @@ void Widget::incrementScore() {
         nextlevel(level);
     }
 
+    if(score == 200){winscene();}//посчитать макс очки, пусть гриша считает
 }
 
 void Widget::death() {
@@ -144,7 +152,7 @@ void Widget::winscene() {
     scene->addItem(wl);
     wl->setPos(-250, -250);
     pacman->die();
-
+    ui->scorewin->setText(QString::number(finaltime/5));
     scene->update();
 
 }
@@ -175,7 +183,7 @@ void Widget::keyPressEvent(QKeyEvent *ev)
 void Widget::nextlevel(int level) {
     pacman->setPos(0, 0);
 
-    if(level == 1)block = block1;
+    if(level == 1){block = block1; finaltime = 0;}
     if(level == 2)block = block2;
     if(level == 3)block = block3;
 

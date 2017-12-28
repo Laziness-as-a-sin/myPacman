@@ -32,7 +32,7 @@ private:
     Ui::Widget *ui;
     QGraphicsScene *scene;
     PacMan *pacman;    
-    QTimer *timer;
+    QTimer *timer, *BigTimer;
     double countscope = 0, bpause = 0;
     double countdeath = 0;
     bool die = 0, win = 0;
@@ -44,9 +44,10 @@ private:
     QPixmap d, w;
     QGraphicsItem *dl, *wl;
     void keyPressEvent(QKeyEvent *);
-    int score = 0, level = 1;
+    int score = 0, level = 1, finaltime = 0;
     void pause();
     void endpause();
+    void timeplus();
 
 private slots:
      void stop(QGraphicsItem * item);
