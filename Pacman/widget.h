@@ -33,16 +33,20 @@ private:
     QGraphicsScene *scene;
     PacMan *pacman;    
     QTimer *timer;
-    double countscope = 0;
+    double countscope = 0, bpause = 0;
     double countdeath = 0;
     bool die = 0;
     void incrementScore();
     void death();
     void restart();
-    QByteArray block;
+    void nextlevel(int level);
+    QByteArray block, block1, block2, block3;
     QPixmap d;
     QGraphicsItem *dl;
     void keyPressEvent(QKeyEvent *);
+    int score = 0, level = 1;
+    void pause();
+    void endpause();
 
 private slots:
      void stop(QGraphicsItem * item);
