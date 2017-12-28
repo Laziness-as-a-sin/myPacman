@@ -35,11 +35,10 @@ private:
     QTimer *timer;
     double countscope = 0, bpause = 0;
     double countdeath = 0;
-    bool die = 0;
+    bool die = 0, win = 0;
     void incrementScore();
     void death();
-    void restart();
-    void win();
+    void winscene();
     void nextlevel(int level);
     QByteArray block, block1, block2, block3;
     QPixmap d, w;

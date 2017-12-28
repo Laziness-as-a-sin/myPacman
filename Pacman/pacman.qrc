@@ -8,5 +8,6 @@
         <file alias="Die">SceneDie.png</file>
         <file alias="lvl2">level2.txt</file>
         <file alias="lvl3">level3.txt</file>
+        <file alias="Win">SceneWin.png</file>
     </qresource>
 </RCC>

@@ -16,6 +16,9 @@ Widget::Widget(QWidget *parent) :
     d = QPixmap(":Die");
     dl = scene->addPixmap(d);
     scene->removeItem(dl);
+    w = QPixmap(":Win");
+    wl = scene->addPixmap(w);
+    scene->removeItem(wl);
 
 
     ui->graphicsView->setScene(scene);
@@ -60,7 +63,7 @@ Widget::Widget(QWidget *parent) :
        block2 = lvl2.readAll();
     }
 
-    restart();
+    nextlevel(1);
 }
 
 void Widget::stop(QGraphicsItem *item)//взаимодействие, надо переименовать
@@ -82,9 +85,9 @@ void Widget::stop(QGraphicsItem *item)//взаимодействие, надо �
             pieces.removeOne(item);
             delete piece;
             incrementScore();
-            if(pieces.isEmpty()) {
+            /*if(pieces.isEmpty()) {
                 win();
-            }
+            }*/
         }
 
 }
@@ -102,7 +105,7 @@ void Widget::incrementScore() {
         nextlevel(level);
     }
 
-       //
+    if(score == 200){winscene();}//посчитать макс очки, пусть гриша считает
 }
 
 void Widget::death() {
@@ -131,79 +134,25 @@ void Widget::death() {
     scene->update();
 }
 
-void Widget::win() {
-    /*
+void Widget::winscene() {
+
     pacman->stop();
     ghosts[0]->stop();
 
     pacman->KeyA = 0;
     ghosts[0]->KeyA = 0;
-    die = 1;
+    win = 1; //die нельзя он удалит dl которого на тот момент не существует
     scene->addItem(wl);
-    wl->setPos(-300, -300);
+    wl->setPos(-250, -250);
     pacman->die();
 
     scene->update();
-    */
-}
 
-void Widget::restart() {
-    pacman->setPos(0, 0);
-
-    foreach(Ghost *ghost, ghosts) {
-        scene->removeItem(ghost);
-        ghosts.removeOne(ghost);
-        delete ghost;
-    }
-
-    foreach(QGraphicsItem *piece, pieces) {
-        scene->removeItem(piece);
-        pieces.removeOne(piece);
-        delete piece;
-    }
-
-    foreach (QGraphicsItem *wallblock, wallblocks) {
-        scene->removeItem(wallblock);
-        wallblocks.removeOne(wallblock);
-        delete wallblock;
-    }
-
-    int x = -240,y = -240;
-
-    for(int i = 0; i < 700; i++){
-       if (block1[i] == '+'){
-
-           WallBlock *wallblock = new WallBlock();
-           scene->addItem(wallblock);
-           wallblock->setPos(x, y);
-           wallblocks.append(wallblock);
-           x += 20;
-       }else if(block1[i] == '-') {
-           Piece *piece = new Piece();
-           scene->addItem(piece);
-           piece->setPos(x, y);
-           pieces.append(piece);
-           x += 20;
-       }else if(block1[i] == '.'){
-           x += 20;
-       }else if(block1[i] == '*'){
-           x = -240;
-           y += 20;
-        }
-    }
-
-    ghost = new Ghost();
-    scene->addItem(ghost);
-    ghost->setPos(0, 60);
-    ghosts.append(ghost);
-
-    ui->scoreLabel->setText("SCORE: 0");
-    ui->lifesLabel->setText("LIFES: 3");
 }
 
 void Widget::revive() {
     pacman->go();
-    restart();
+    nextlevel(1);
     pacman->KeyA = 1;
     ghosts[0]->KeyA = 1;
     level = 1;
@@ -211,11 +160,15 @@ void Widget::revive() {
         scene->removeItem(dl);
         die = 0;
     }
+    if(win){
+        scene->removeItem(wl);
+        win = 0;
+    }
 }
 
 void Widget::keyPressEvent(QKeyEvent *ev)
 {
-    if(ev->key() == Qt::Key_G)if(die)revive();
+    if(die || win)revive();
 
     if(ev->key() == Qt::Key_P)
         pause();
