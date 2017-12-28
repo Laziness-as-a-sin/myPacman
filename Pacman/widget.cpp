@@ -83,7 +83,6 @@ void Widget::stop(QGraphicsItem *item)//взаимодействие, надо �
     foreach (QGraphicsItem *ghost, ghosts)
         if(ghost == item)
             {
-            //needs some work
                 death();
             }
     foreach (QGraphicsItem *piece, pieces)
@@ -147,7 +146,7 @@ void Widget::winscene() {
 
     pacman->KeyA = 0;
     ghosts[0]->KeyA = 0;
-    win = 1; //die нельзя он удалит dl которого на тот момент не существует
+    win = 1;
     scene->addItem(wl);
     wl->setPos(-250, -250);
     pacman->die();
@@ -206,7 +205,10 @@ void Widget::nextlevel(int level) {
 
     int x = -240,y = -240;
 
-    for(int i = 0; i < 700; i++){
+    bool map[24][24];
+    int map_row = 0, map_column = 0;
+
+    for(int i = 0; i < 676; i++){
        if (block[i] == '+'){
 
            WallBlock *wallblock = new WallBlock();
@@ -214,21 +216,37 @@ void Widget::nextlevel(int level) {
            wallblock->setPos(x, y);
            wallblocks.append(wallblock);
            x += 20;
+
+           map[map_row][map_column] = false;
+           map_column++;
+
        }else if(block[i] == '-') {
            Piece *piece = new Piece();
            scene->addItem(piece);
            piece->setPos(x, y);
            pieces.append(piece);
            x += 20;
+
+           map[map_row][map_column] = true;
+           map_column++;
+
        }else if(block[i] == '.'){
            x += 20;
+
+           map[map_row][map_column] = true;
+           map_column++;
+
        }else if(block[i] == '*'){
            x = -240;
            y += 20;
+
+           map_row++;
+           map_column = 0;
         }
     }
 
     ghost = new Ghost();
+    ghost->mapInit(map);
     scene->addItem(ghost);
     ghost->setPos(0, 60);
     ghosts.append(ghost);

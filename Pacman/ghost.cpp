@@ -1,4 +1,6 @@
 #include "ghost.h"
+#include <fstream>
+#include <QDebug>
 
 Ghost::Ghost(QObject *parent) : QObject(parent), QGraphicsItem()
 {
@@ -9,6 +11,12 @@ Ghost::Ghost(QObject *parent) : QObject(parent), QGraphicsItem()
     timer = new QTimer();
     connect(timer, &QTimer::timeout, this, &Ghost::MoveOnTime);
     timer->start(1000/200);
+
+    for(int i = 0; i < 24; i++) {
+        for(int j = 0; j < 24; j++) {
+            paths[i][j] = 0;
+        }
+    }
 }
 
 QRectF Ghost::boundingRect() const
@@ -83,4 +91,35 @@ void Ghost::stop()
 void Ghost::go()
 {
     Vy = 1;
+}
+
+void Ghost::mapInit(bool map[24][24]) {
+    for(int i = 0; i < 24; i++) {
+        for(int j = 0; j < 24; j++) {
+            //сверху
+            if(i > 0 && map[i - 1][j]) {
+                paths[i][j]++;
+            }
+            //снизу
+            if(i < 23 && map[i + 1][j]) {
+                paths[i][j]++;
+            }
+            //слева
+            if(j > 0 && map[i][j - 1]) {
+                paths[i][j]++;
+            }
+            //справа
+            if(j < 23 && map[i][j + 1]) {
+                paths[i][j]++;
+            }
+        }
+    }
+
+    /*for(int i = 0; i < 24; i++) {
+        for(int j = 0; j < 24; j++) {
+            output << paths[i][j] << " ";
+        }
+        output << "\n";
+    }*/
+
 }

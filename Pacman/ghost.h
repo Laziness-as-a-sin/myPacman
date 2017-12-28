@@ -16,8 +16,10 @@ public:
     explicit Ghost(QObject *parent = 0);
     void stop();
     void go();
+    void mapInit(bool map[24][24]);
     int counter = 0, Vx, Vy;
     bool KeyA = 1;
+    int paths[24][24];
 signals:
     //void signalCheckItem(QGraphicsItem *item);
 
