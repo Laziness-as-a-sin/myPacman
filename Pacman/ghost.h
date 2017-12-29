@@ -14,22 +14,17 @@ class Ghost : public QObject, public QGraphicsItem
     Q_OBJECT
 public:
     explicit Ghost(QObject *parent = 0);
-    void stop();
-    void go();
     void mapInit(bool map[24][24]);
     int counter = 0, Vx, Vy;
-    bool KeyA = 1;
+    bool KeyA = 1, stop;
     int paths[24][24];
     bool bmap[24][24];
 signals:
-    //void signalCheckItem(QGraphicsItem *item);
 
 public slots:
-    //void PushButton(int);
     void MoveOnTime();
 
 private slots:
-    //void NextFrame();
 
 protected:
     QRectF boundingRect() const;
@@ -37,7 +32,6 @@ protected:
 
 private:
     int mx, my;
-    //QPixmap *SpriteImage;
     QTimer *timer;
     bool turnUP, turnDOWN, turnLEFT, turnRIGHT;
 };

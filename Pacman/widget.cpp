@@ -31,12 +31,11 @@ Widget::Widget(QWidget *parent) :
     ui->lifesLabel->setReadOnly(true);
     ui->scoreLabel->setReadOnly(true);
     ui->infoLabel->setReadOnly(true);
-    //ui->EndW->setReadOnly(true);
+
 
     ui->lifesLabel->setStyleSheet("color: yellow; border-style:none");
     ui->scoreLabel->setStyleSheet("color: yellow; border-style: none");
     ui->infoLabel->setStyleSheet("color: yellow; border-style: none");
-    //ui->EndW->setStyleSheet("color: yellow; border-style: none");
     ui->scorewin->setStyleSheet("QLabel{background-color: rgba(0, 0, 0, 0);}");
     ui->scorewin->setAlignment(Qt::AlignCenter);
 
@@ -118,7 +117,7 @@ void Widget::death() {
     ui->lifesLabel->setText("LIFES: " + QString::number(curLifes));
 
     pacman->stop();
-    ghosts[0]->stop();
+    ghosts[0]->stop = 1;
 
 
     if(curLifes == 0){
@@ -142,7 +141,7 @@ void Widget::death() {
 void Widget::winscene() {
 
     pacman->stop();
-    ghosts[0]->stop();
+    ghosts[0]->stop = 1;
 
     pacman->KeyA = 0;
     ghosts[0]->KeyA = 0;
@@ -150,7 +149,7 @@ void Widget::winscene() {
     scene->addItem(wl);
     wl->setPos(-250, -250);
     pacman->die();
-    ui->scorewin->setText(QString::number(finaltime/5));
+    ui->scorewin->setText("time: " + QString::number(finaltime/5));
     scene->update();
 
 }
@@ -245,7 +244,7 @@ void Widget::nextlevel(int level) {
         }
     }
 
-    if(!map[0][0])ui->scorewin->setText("");
+    ui->scorewin->setText("");
 
     ghost = new Ghost();
     ghost->mapInit(map);
@@ -259,6 +258,6 @@ void Widget::nextlevel(int level) {
 
 void Widget::pause(){
     pacman->stop();
-    ghosts[0]->stop();
+    ghosts[0]->stop = 1;
 }
 

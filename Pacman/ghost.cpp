@@ -4,7 +4,7 @@
 Ghost::Ghost(QObject *parent) : QObject(parent), QGraphicsItem()
 {
     setRotation(0);
-    Vx = 0, Vy = 0;
+    Vx = 0, Vy = 0, stop = 0;
 
     timer = new QTimer();
     connect(timer, &QTimer::timeout, this, &Ghost::MoveOnTime);
@@ -26,8 +26,7 @@ void Ghost::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
 {
     counter++;
     if(counter > 16)counter = 0;
-    //painter->setBrush(Qt::green);
-    //painter->drawEllipse(-10, -10, 20, 20);
+
     painter->setBrush(Qt::green);
     painter->setPen(Qt::green);
     painter->drawEllipse(-10, -10, 20, 10); //верх
@@ -50,13 +49,22 @@ void Ghost::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
 
     painter->setBrush(Qt::black); //зрачки
     painter->setPen(Qt::black);
+
     if(Vy == 1){ //взгляд вниз
-    painter->drawEllipse(-6, -2, 3, 3);
-    painter->drawEllipse(4, -2, 3, 3);
+        painter->drawEllipse(-6, -2, 3, 3);
+        painter->drawEllipse(4, -2, 3, 3);
     }
     if(Vy == -1){ //взгляд вверх
-    painter->drawEllipse(-6, -5, 3, 3);
-    painter->drawEllipse(4, -5, 3, 3);
+        painter->drawEllipse(-6, -5, 3, 3);
+        painter->drawEllipse(4, -5, 3, 3);
+    }
+    if(Vx == 1){ //взгляд вправо
+        painter->drawEllipse(-4, -3, 3, 3);
+        painter->drawEllipse(6, -3, 3, 3);
+    }
+    if(Vx == -1){ //взгляд влево
+        painter->drawEllipse(-8, -3, 3, 3);
+        painter->drawEllipse(2, -3, 3, 3);
     }
 
     Q_UNUSED(option);
@@ -70,16 +78,14 @@ void Ghost::MoveOnTime()
     turnDOWN = 0;
     turnUP = 0;
 
+    if(stop){Vx = 0; Vy = 0;}
+
     if(KeyA){
-        if(GetAsyncKeyState(VK_LEFT))go();
-        if(GetAsyncKeyState(VK_RIGHT))go();
-        if(GetAsyncKeyState(VK_UP))go();
-        if(GetAsyncKeyState(VK_DOWN))go();
+        if(GetAsyncKeyState(VK_LEFT))stop = 0;
+        if(GetAsyncKeyState(VK_RIGHT))stop = 0;
+        if(GetAsyncKeyState(VK_UP))stop = 0;
+        if(GetAsyncKeyState(VK_DOWN))stop = 0;
     }
-
-
-    qDebug() << my;
-    qDebug() << mx;
 
     if((int)this->y() % 20 == 0 && (int)this->x() % 20 == 0){
         mx = (int)this->x() / 20;
@@ -102,6 +108,8 @@ void Ghost::MoveOnTime()
         if(bmap[my-1][mx])turnUP = 1;
 
         int super_random = qrand() % ((4 + 1) - 1) + 1;
+
+        if(!stop)
         while(1){
             if(super_random == 1 && turnRIGHT && Vx != -1){Vx = 1; Vy = 0; break;}
             if(super_random == 2 && turnLEFT && Vx != 1){Vx = -1; Vy = 0; break;}
@@ -116,7 +124,6 @@ void Ghost::MoveOnTime()
 
     }
 
-
     setPos(mapToParent(Vx, Vy));
     if(this->x() - 10 < -260){
         this->setX(250);
@@ -127,44 +134,8 @@ void Ghost::MoveOnTime()
 
 }
 
-void Ghost::stop()
-{
-    Vx = 0;
-}
-
-void Ghost::go()
-{
-
-}
-
 void Ghost::mapInit(bool map[24][24]) {
-    for(int i = 0; i < 24; i++) {
-        for(int j = 0; j < 24; j++) {
+    for(int i = 0; i < 24; i++)
+        for(int j = 0; j < 24; j++)
             bmap[i][j] = map[i][j];
-            //сверху
-            if(i > 0 && map[i - 1][j]) {
-                paths[i][j]++;
-            }
-            //снизу
-            if(i < 23 && map[i + 1][j]) {
-                paths[i][j]++;
-            }
-            //слева
-            if(j > 0 && map[i][j - 1]) {
-                paths[i][j]++;
-            }
-            //справа
-            if(j < 23 && map[i][j + 1]) {
-                paths[i][j]++;
-            }
-        }
-    }
-
-    /*for(int i = 0; i < 24; i++) {
-        for(int j = 0; j < 24; j++) {
-            output << paths[i][j] << " ";
-        }
-        output << "\n";
-    }*/
-
 }
